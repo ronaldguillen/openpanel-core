@@ -1,0 +1,68 @@
+#! /bin/sh
+
+# This file is part of OpenPanel - The Open Source Control Panel
+# OpenPanel is free software: you can redistribute it and/or modify it 
+# under the terms of the GNU General Public License as published by the Free 
+# Software Foundation, using version 3 of the License.
+#
+# Please note that use of the OpenPanel trademark may be subject to additional 
+# restrictions. For more information, please visit the Legal Information 
+# section of the OpenPanel website on http://www.openpanel.com/
+
+
+### BEGIN INIT INFO
+# Provides:			opencore
+# Default-Start:	
+# Default-Stop:		
+# Required-Start:	
+# Required-Stop:	
+# Short-Description:	opencore
+### END INIT INFO
+
+
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+NAME=openpanel
+
+set -e
+
+control_daemon( ) {
+	DAEMON_SCRIPT=/etc/init.d/$2
+	if [ -f $DAEMON_SCRIPT ] ; then
+		$DAEMON_SCRIPT $1
+	fi
+}
+
+case "$1" in
+  start)
+    control_daemon start openpanel-authd
+    control_daemon start openpanel-swupd
+    control_daemon start openpanel-core
+	;;
+
+  stop)
+    control_daemon stop openpanel-core
+    control_daemon stop openpanel-swupd
+    control_daemon stop openpanel-authd
+	;;
+  restart)
+    control_daemon stop openpanel-core
+    control_daemon stop openpanel-swupd
+    control_daemon stop openpanel-authd
+
+    control_daemon restart openpanel-authd
+    control_daemon restart openpanel-swupd
+    control_daemon restart openpanel-core
+    ;;
+  status)
+    control_daemon status openpanel-authd || true
+    control_daemon status openpanel-swupd || true
+    control_daemon status openpanel-core || true
+    ;;
+  *)
+	N=/etc/init.d/$NAME
+	echo "Usage: $N {start|stop|restart|status}" >&2
+	exit 1
+	;;
+esac
+
+exit 0

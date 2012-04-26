@@ -1,0 +1,77 @@
+-- This file is part of OpenPanel - The Open Source Control Panel
+-- OpenPanel is free software: you can redistribute it and/or modify it 
+-- under the terms of the GNU General Public License as published by the Free 
+-- Software Foundation, using version 3 of the License.
+--
+-- Please note that use of the OpenPanel trademark may be subject to additional 
+-- restrictions. For more information, please visit the Legal Information 
+-- section of the OpenPanel website on http://www.openpanel.com/
+
+-- #######################################################################################
+-- no ordering should be inferred from any ID - look at transactions for that
+--
+-- uniquecontext, when NOT NULL, points to objects.id
+--
+-- classes that demand contextless uniqueness on the metaid (domains, http vhosts)
+-- refer to the class object; class objects have class 1
+-- 
+-- UNIQUE index on
+-- * (uuid)
+-- * (uniquecontext,metaid); adding class to this one is up for debate
+-- 
+-- content is always a serialized GRACE value, according to some 
+-- efficient XML schema with output similar to
+--   <s id="host">www</s><s id="type">A</s><s id="target">1.2.3.4</s>
+-- the wanted and reality columns are purely caching and up for debate
+--
+-- no attributes-table - attributes are either childobjects, or part of
+-- the serialization
+--
+-- TODO: indexes!
+CREATE TABLE objects (
+id INTEGER PRIMARY KEY AUTOINCREMENT,
+uuid TEXT NOT NULL,
+metaid TEXT COLLATE NOCASE,
+parent INTEGER,
+owner INTEGER,
+uniquecontext INTEGER,
+class NUMERIC NOT NULL,
+content TEXT NOT NULL,
+UNIQUE (uuid),
+UNIQUE (metaid,uniquecontext));
+
+CREATE TABLE classquota (
+id INTEGER PRIMARY KEY AUTOINCREMENT,
+userid INTEGER NOT NULL,
+classid INTEGER NOT NULL,
+quota INTEGER,
+UNIQUE (userid, classid));
+
+CREATE TABLE specialquota (
+id INTEGER PRIMARY KEY AUTOINCREMENT,
+userid INTEGER NOT NULL,
+tag TEXT NOT NULL,
+quota INTEGER,
+warning INTEGER,
+UNIQUE (userid, tag));
+
+CREATE TABLE specialquotausage (
+id INTEGER PRIMARY KEY AUTOINCREMENT,
+userid INTEGER NOT NULL,
+tag TEXT NOT NULL,
+usage INTEGER,
+UNIQUE (userid, tag));
+
+CREATE TABLE powermirror (
+id INTEGER PRIMARY KEY AUTOINCREMENT,
+userid INTEGER NOT NULL,
+powerid INTEGER NOT NULL);
+
+CREATE INDEX puserid ON powermirror (userid);
+CREATE INDEX ppowerid ON powermirror (powerid);
+
+-- searchability; valueid refers to an entry in objectvalues 
+CREATE TABLE searchkeys (
+id INTEGER PRIMARY KEY AUTOINCREMENT,
+searchkey TEXT,
+objectid NUMERIC NOT NULL);

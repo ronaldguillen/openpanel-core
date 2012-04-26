@@ -1,0 +1,121 @@
+#! /bin/sh
+
+# This file is part of OpenPanel - The Open Source Control Panel
+# OpenPanel is free software: you can redistribute it and/or modify it 
+# under the terms of the GNU General Public License as published by the Free 
+# Software Foundation, using version 3 of the License.
+#
+# Please note that use of the OpenPanel trademark may be subject to additional 
+# restrictions. For more information, please visit the Legal Information 
+# section of the OpenPanel website on http://www.openpanel.com/
+
+
+### BEGIN INIT INFO
+# Provides:         opencore-core
+# Required-Start:   $remote_fs $syslog $all
+# Required-Stop:    $remote_fs $syslog
+# Default-Start:    2 3 4 5
+# Default-Stop:     0 1 6
+# Short-Description:    opencore-core
+### END INIT INFO
+
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+DAEMON=/var/openpanel/bin/openpaneld
+LONGNAME=com.openpanel.svc.opencore
+NAME=openpanel-core
+DESC="Openpanel core daemon"
+PIDFILE="/var/run/$LONGNAME.pid"
+
+if [ -f /etc/default/openpanel-core ] ; then
+    . /etc/default/openpanel-core
+fi
+
+. /lib/lsb/init-functions
+
+generate_ssl_certificate()
+{
+    OPENPANEL_PEM=/etc/openpanel/certificate.pem    
+    
+    rm -f "${OPENPANEL_PEM}"
+    touch "${OPENPANEL_PEM}"
+    chmod 600 "${OPENPANEL_PEM}"
+    chown openpanel-core:openpanel-core "${OPENPANEL_PEM}"
+
+    echo "# automatically generated from ${SSL_CERTIFICATE}"   >  $OPENPANEL_PEM
+    echo "# and ${SSL_PRIVATEKEY}"                             >> $OPENPANEL_PEM
+    echo ''                                                    >> $OPENPANEL_PEM
+    if which openssl > /dev/null; then
+        # if possible, use openssl to copy over the certificate and key
+        openssl x509 -in "${SSL_CERTIFICATE}"                  >> $OPENPANEL_PEM
+        openssl rsa  -in "${SSL_PRIVATEKEY}"                   >> $OPENPANEL_PEM
+    else
+        cat  "${SSL_CERTIFICATE}" "${SSL_PRIVATEKEY}"          >> $OPENPANEL_PEM
+    fi
+}
+
+# check if the daemon exists
+test -x $DAEMON || exit 0
+
+set -e
+
+case "$1" in
+  start)
+    generate_ssl_certificate
+    log_daemon_msg "Starting $DESC" $NAME
+    if start_daemon -p $PIDFILE $DAEMON $DAEMON_OPTS; then
+        log_success_msg
+    else
+        log_failure_msg
+    fi
+    ;;
+  stop)
+    if killproc -p $PIDFILE $DAEMON; then
+        log_success_msg
+    else
+        log_failure_msg
+    fi
+    ;;
+  restart|force-reload|reload)
+    #
+    #   If the "reload" option is implemented, move the "force-reload"
+    #   option to the "reload" entry above. If not, "force-reload" is
+    #   just the same as "restart".
+    #
+    log_daemon_msg "Restarting $DESC" $NAME
+
+    killproc -p $PIDFILE $DAEMON
+
+    generate_ssl_certificate
+    if pidofproc -p $PIDFILE $DAEMON > /dev/null; then
+        sleep 1
+    
+        while pidofproc -p $PIDFILE $DAEMON > /dev/null; do
+            log_action_msg "."
+            sleep 5
+        done
+    fi
+    
+    if start_daemon -p $PIDFILE $DAEMON $DAEMON_OPTS; then
+        log_end_msg 0
+    else
+        log_end_msg 1
+    fi
+    ;;
+  status)
+    if pidofproc -p $PIDFILE $DAEMON > /dev/null; then
+      log_success_msg "$NAME is running"
+    else
+      log_success_msg "$NAME is not running"
+    fi
+    exit $status
+    ;;
+  
+  *)
+    N=/etc/init.d/$NAME
+    echo "Usage: $N {start|stop|restart|force-reload|reload|status}" >&2
+    exit 1
+    ;;
+esac
+
+exit 0
+

@@ -1,0 +1,35 @@
+#!/bin/sh
+# This file is part of OpenPanel - The Open Source Control Panel
+# OpenPanel is free software: you can redistribute it and/or modify it 
+# under the terms of the GNU General Public License as published by the Free 
+# Software Foundation, using version 3 of the License.
+#
+# Please note that use of the OpenPanel trademark may be subject to additional 
+# restrictions. For more information, please visit the Legal Information 
+# section of the OpenPanel website on http://www.openpanel.com/
+
+
+# postrm framework for openpanel packages
+#
+# see: dh_installdeb(1)
+
+set -e
+
+
+case "$1" in
+    purge)
+        update-rc.d openpanel-core remove > /dev/null
+        rm -f /var/openpanel/log/opencore.*
+        rm -f /var/openpanel/cache/module.cache
+        rm -f /var/openpanel/db/panel/panel.db
+        rm -f /var/openpanel/db/session.xml
+        rm -f /var/openpanel/db/alertq.db
+        rm -rf /var/openpanel/conf/staging/*
+        ;;
+esac
+
+#DEBHELPER#
+
+exit 0
+
+

@@ -1,0 +1,14 @@
+cxx
+ranlib
+shared
+pthread
+libdl
+libsocket
+libcrypt
+libsqlite3
+gmtoff
+sendfile
+grace
+gracessl
+pcre
+gracepcre

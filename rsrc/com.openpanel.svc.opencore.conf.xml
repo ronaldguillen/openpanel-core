@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+# This file is part of OpenPanel - The Open Source Control Panel
+# OpenPanel is free software: you can redistribute it and/or modify it 
+# under the terms of the GNU General Public License as published by the Free 
+# Software Foundation, using version 3 of the License.
+#
+# Please note that use of the OpenPanel trademark may be subject to additional 
+# restrictions. For more information, please visit the Legal Information 
+# section of the OpenPanel website on http://www.openpanel.com/
+-->
+
+<com.openpanel.svc.opencore.conf>
+  <system>
+    <eventlog>/var/openpanel/log/opencore.event.log</eventlog>
+    <debuglog>/var/openpanel/log/opencore.debug.log</debuglog>
+  </system>
+  <alert>
+    <routing>smtp</routing>
+    <smtp>
+      <to>root</to>
+      <from>opencore@localhost</from>
+      <subject>Critical OpenPanel error</subject>
+      <server>127.0.0.1</server>
+    </smtp>
+  </alert>
+  <rpc>
+    <unixsocket>
+      <minthreads>2</minthreads>
+      <maxthreads>8</maxthreads>
+    </unixsocket>
+    <httpssocket>
+      <listenport>4089</listenport>
+      <minthreads>6</minthreads>
+      <maxthreads>32</maxthreads> 
+      <certificate>/etc/openpanel/certificate.pem</certificate>   
+    </httpssocket>    
+  </rpc>
+</com.openpanel.svc.opencore.conf>

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+# This file is part of OpenPanel - The Open Source Control Panel
+# OpenPanel is free software: you can redistribute it and/or modify it 
+# under the terms of the GNU General Public License as published by the Free 
+# Software Foundation, using version 3 of the License.
+#
+# Please note that use of the OpenPanel trademark may be subject to additional 
+# restrictions. For more information, please visit the Legal Information 
+# section of the OpenPanel website on http://www.openpanel.com/
+-->
+
+<xml.schema>
+
+  <xml.schema.options>
+    <xml.option.rootclass>d</xml.option.rootclass>
+  </xml.schema.options>
+  
+  <xml.class name="d">
+    <xml.type>dict</xml.type>
+    <xml.attributes>
+      <xml.attribute label="i" isindex="true">
+        <xml.type>string</xml.type>
+      </xml.attribute>
+    </xml.attributes>
+    <xml.proplist>
+      <xml.member class="d"/>
+      <xml.member class="i"/>
+      <xml.member class="s"/>
+      <xml.member class="f"/>
+      <xml.member class="b"/>
+      <xml.member class="a"/>
+    </xml.proplist>
+  </xml.class>
+  
+  <xml.class name="i">
+    <xml.type>integer</xml.type>
+    <xml.attributes>
+      <xml.attribute label="i" isindex="true">
+        <xml.type>string</xml.type>
+      </xml.attribute>
+    </xml.attributes>
+  </xml.class>
+  
+  <xml.class name="s">
+    <xml.type>string</xml.type>
+    <xml.attributes>
+      <xml.attribute label="i" isindex="true">
+        <xml.type>string</xml.type>
+      </xml.attribute>
+    </xml.attributes>
+  </xml.class>
+  
+  <xml.class name="f">
+    <xml.type>float</xml.type>
+    <xml.attributes>
+      <xml.attribute label="i" isindex="true">
+        <xml.type>string</xml.type>
+      </xml.attribute>
+    </xml.attributes>
+  </xml.class>
+  
+  <xml.class name="b">
+    <xml.type>bool</xml.type>
+    <xml.attributes>
+      <xml.attribute label="i" isindex="true">
+        <xml.type>string</xml.type>
+      </xml.attribute>
+    </xml.attributes>
+  </xml.class>
+
+  <xml.class name="a">  
+    <xml.attributes>
+      <xml.attribute label="i" isindex="true">
+        <xml.type>string</xml.type>
+      </xml.attribute>
+    </xml.attributes>
+    <xml.proplist>
+      <xml.member class="d"/>
+      <xml.member class="i"/>
+      <xml.member class="s"/>
+      <xml.member class="f"/>
+      <xml.member class="b"/>
+      <xml.member class="a"/>
+    </xml.proplist>
+  </xml.class>
+
+</xml.schema>
